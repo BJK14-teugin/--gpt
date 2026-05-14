@@ -1,683 +1,341 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>범-GPT</title>
 
 <style>
-
-/* =========================
-   기본 설정
-========================= */
-
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
 body{
-    background:#000;
-    color:white;
-    font-family:sans-serif;
-    height:100vh;
-    display:flex;
-    flex-direction:column;
+background:#000;
+color:white;
+font-family:sans-serif;
+height:100vh;
+display:flex;
+flex-direction:column;
 }
 
-/* =========================
-   상단 바
-========================= */
-
 .topbar{
-    height:60px;
-    background:#0a0a0a;
-    border-bottom:1px solid #222;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    padding:0 20px;
+height:60px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+border-bottom:1px solid #222;
+background:#0a0a0a;
 }
 
 .logo{
-    font-size:24px;
-    font-weight:bold;
+font-size:24px;
+font-weight:bold;
 }
 
 .reset-btn{
-    background:#111;
-    color:white;
-
-    border:1px solid #333;
-
-    padding:10px 15px;
-
-    border-radius:12px;
-
-    cursor:pointer;
-
-    transition:0.2s;
+background:#111;
+color:white;
+border:1px solid #333;
+padding:10px;
+border-radius:10px;
 }
-
-.reset-btn:hover{
-    background:#222;
-}
-
-/* =========================
-   채팅창
-========================= */
 
 #chat{
-    flex:1;
-    overflow-y:auto;
-    padding:20px;
+flex:1;
+overflow-y:auto;
+padding:20px;
 }
 
-/* =========================
-   메시지
-========================= */
-
 .message{
-    max-width:80%;
-
-    padding:14px;
-
-    margin:10px 0;
-
-    border-radius:14px;
-
-    word-wrap:break-word;
-
-    line-height:1.5;
+max-width:80%;
+padding:14px;
+margin:10px 0;
+border-radius:14px;
+word-wrap:break-word;
 }
 
 .user{
-    margin-left:auto;
-
-    background:#1e1e1e;
+background:#1e1e1e;
+margin-left:auto;
 }
 
 .ai{
-    background:#111;
-
-    border:1px solid #2c2c2c;
+background:#111;
+border:1px solid #333;
 }
-
-/* =========================
-   첨부파일 박스
-========================= */
-
-.file-box{
-    margin-top:10px;
-
-    background:#181818;
-
-    border:1px solid #333;
-
-    border-radius:12px;
-
-    padding:10px;
-
-    font-size:14px;
-}
-
-img,
-video{
-    max-width:250px;
-
-    border-radius:12px;
-
-    margin-top:10px;
-}
-
-iframe{
-    width:250px;
-    height:300px;
-
-    border:none;
-
-    border-radius:12px;
-
-    margin-top:10px;
-}
-
-/* =========================
-   하단 입력창
-========================= */
 
 .bottom{
-    background:#0a0a0a;
-
-    border-top:1px solid #222;
-
-    padding:15px;
+padding:15px;
+border-top:1px solid #222;
+background:#0a0a0a;
 }
 
 .input-area{
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
+display:flex;
+gap:10px;
 }
-
-/* 첨부 버튼 */
 
 .attach-btn{
-    width:50px;
-    height:50px;
-
-    border:none;
-
-    border-radius:12px;
-
-    background:#111;
-
-    color:white;
-
-    font-size:22px;
-
-    cursor:pointer;
+width:50px;
+height:50px;
+border:none;
+border-radius:12px;
+background:#111;
+color:white;
+font-size:22px;
 }
-
-.attach-btn:hover{
-    background:#222;
-}
-
-/* 입력창 */
 
 #input{
-    flex:1;
-
-    height:50px;
-
-    background:#111;
-
-    color:white;
-
-    border:none;
-
-    outline:none;
-
-    border-radius:12px;
-
-    padding:0 15px;
-
-    font-size:16px;
+flex:1;
+height:50px;
+background:#111;
+border:none;
+color:white;
+padding:0 15px;
+border-radius:12px;
+outline:none;
 }
-
-/* 전송 버튼 */
 
 .send-btn{
-    width:70px;
-    height:50px;
-
-    border:none;
-
-    border-radius:12px;
-
-    background:white;
-
-    color:black;
-
-    font-weight:bold;
-
-    cursor:pointer;
+width:70px;
+height:50px;
+border:none;
+border-radius:12px;
+background:white;
+font-weight:bold;
 }
-
-.send-btn:hover{
-    opacity:0.8;
-}
-
-/* 숨김 */
 
 #fileInput{
-    display:none;
+display:none;
 }
 
-/* =========================
-   스크롤바
-========================= */
+@media(max-width:768px){
 
-::-webkit-scrollbar{
-    width:8px;
+.logo{
+font-size:20px;
 }
 
-::-webkit-scrollbar-track{
-    background:#111;
+.message{
+max-width:95%;
 }
 
-::-webkit-scrollbar-thumb{
-    background:#333;
-    border-radius:10px;
+.send-btn{
+width:60px;
 }
 
-/* =========================
-   반응형
-========================= */
-
-/* 태블릿 */
-
-@media (max-width:1024px){
-
-    .message{
-        max-width:90%;
-    }
-
 }
-
-/* 모바일 */
-
-@media (max-width:768px){
-
-    .topbar{
-        height:55px;
-        padding:0 15px;
-    }
-
-    .logo{
-        font-size:20px;
-    }
-
-    .reset-btn{
-        padding:8px 12px;
-        font-size:14px;
-    }
-
-    #chat{
-        padding:15px;
-    }
-
-    .message{
-        max-width:95%;
-        font-size:14px;
-
-        padding:12px;
-    }
-
-    .bottom{
-        padding:10px;
-    }
-
-    .input-area{
-        gap:6px;
-    }
-
-    .attach-btn{
-        width:45px;
-        height:45px;
-
-        font-size:20px;
-    }
-
-    #input{
-        height:45px;
-
-        font-size:14px;
-    }
-
-    .send-btn{
-        width:60px;
-        height:45px;
-
-        font-size:13px;
-    }
-
-    img,
-    video,
-    iframe{
-        max-width:100%;
-    }
-
-}
-
-/* 작은 폰 */
-
-@media (max-width:480px){
-
-    .logo{
-        font-size:18px;
-    }
-
-    .message{
-        font-size:13px;
-    }
-
-    .send-btn{
-        width:55px;
-        font-size:12px;
-    }
-
-}
-
 </style>
-
 </head>
 
 <body>
 
-<!-- =========================
-     상단 바
-========================= -->
-
 <div class="topbar">
 
-    <div class="logo">
-        🤖 범-GPT
-    </div>
+<div class="logo">
+🤖 범-GPT
+</div>
 
-    <button 
-        class="reset-btn"
-        onclick="resetChat()"
-    >
-        리셋
-    </button>
+<button
+class="reset-btn"
+onclick="resetChat()"
+>
+리셋
+</button>
 
 </div>
 
-<!-- =========================
-     채팅창
-========================= -->
-
 <div id="chat"></div>
-
-<!-- =========================
-     하단 입력창
-========================= -->
 
 <div class="bottom">
 
-    <div class="input-area">
+<div class="input-area">
 
-        <!-- 첨부 버튼 -->
+<button
+class="attach-btn"
+onclick="openFile()"
+>
++
+</button>
 
-        <button 
-            class="attach-btn"
-            onclick="openFile()"
-        >
-            +
-        </button>
+<input
+type="file"
+id="fileInput"
+accept="image/*,video/*,.pdf"
+onchange="handleFile(event)"
+>
 
-        <!-- 파일 선택 -->
+<input
+id="input"
+placeholder="범-GPT에게 메시지 보내기..."
+>
 
-        <input
-            type="file"
-            id="fileInput"
-            accept="image/*,video/*,.pdf"
-            onchange="handleFile(event)"
-        >
+<button
+class="send-btn"
+onclick="sendMessage()"
+>
+전송
+</button>
 
-        <!-- 입력창 -->
-
-        <input
-            type="text"
-            id="input"
-            placeholder="범-GPT에게 메시지 보내기..."
-        >
-
-        <!-- 전송 버튼 -->
-
-        <button
-            class="send-btn"
-            onclick="sendMessage()"
-        >
-            전송
-        </button>
-
-    </div>
+</div>
 
 </div>
 
 <script>
 
-/* =========================
-   요소
-========================= */
+const chat=
+document.getElementById("chat");
 
-const chat = document.getElementById("chat");
-const input = document.getElementById("input");
+const input=
+document.getElementById("input");
 
-let selectedFile = null;
+let selectedFile=null;
 
-/* =========================
-   저장된 채팅 불러오기
-========================= */
+window.onload=()=>{
 
-window.onload = () => {
+const saved=
+localStorage.getItem("chat");
 
-    const saved = localStorage.getItem("bumgpt_chat");
+if(saved){
 
-    if(saved){
+chat.innerHTML=saved;
 
-        chat.innerHTML = saved;
+scrollBottom();
 
-        scrollBottom();
+}
 
-    }
-
-};
-
-/* =========================
-   파일 열기
-========================= */
+}
 
 function openFile(){
 
-    document
-        .getElementById("fileInput")
-        .click();
+document
+.getElementById(
+"fileInput"
+)
+.click();
 
 }
 
-/* =========================
-   파일 선택
-========================= */
+function handleFile(e){
 
-function handleFile(event){
-
-    selectedFile = event.target.files[0];
+selectedFile=
+e.target.files[0];
 
 }
-
-/* =========================
-   메시지 전송
-========================= */
 
 function sendMessage(){
 
-    const text = input.value.trim();
+const text=
+input.value.trim();
 
-    if(text === "" && !selectedFile) return;
+if(text==""&&!selectedFile)
+return;
 
-    let html = "";
+chat.innerHTML+=`
 
-    /* 유저 메시지 */
+<div class="message user">
 
-    html += `
-        <div class="message user">
+${text}
 
-            ${text}
-    `;
+</div>
 
-    /* 파일 */
+`;
 
-    if(selectedFile){
+fetch(
+"https://beom-gpt.onrender.com/chat",
+{
+method:"POST",
 
-        const fileURL =
-            URL.createObjectURL(selectedFile);
+headers:{
+"Content-Type":
+"application/json"
+},
 
-        /* 이미지 */
+body:JSON.stringify({
 
-        if(
-            selectedFile.type.startsWith("image/")
-        ){
+message:text
 
-            html += `
-                <div class="file-box">
+})
 
-                    📷 ${selectedFile.name}
+})
 
-                    <br>
+.then(
+res=>res.json()
+)
 
-                    <img src="${fileURL}">
+.then(data=>{
 
-                </div>
-            `;
+chat.innerHTML+=`
 
-        }
+<div class="message ai">
 
-        /* 영상 */
+${data.reply}
 
-        else if(
-            selectedFile.type.startsWith("video/")
-        ){
+</div>
 
-            html += `
-                <div class="file-box">
+`;
 
-                    🎥 ${selectedFile.name}
+saveChat();
 
-                    <br>
+scrollBottom();
 
-                    <video controls src="${fileURL}"></video>
+});
 
-                </div>
-            `;
-
-        }
-
-        /* PDF */
-
-        else if(
-            selectedFile.type ===
-            "application/pdf"
-        ){
-
-            html += `
-                <div class="file-box">
-
-                    📄 ${selectedFile.name}
-
-                    <br>
-
-                    <iframe src="${fileURL}"></iframe>
-
-                </div>
-            `;
-
-        }
-
-    }
-
-    html += `</div>`;
-
-    /* 채팅 추가 */
-
-    chat.innerHTML += html;
-
-    /* AI 응답 */
-
-    setTimeout(() => {
-
-        chat.innerHTML += `
-
-            <div class="message ai">
-
-                범-GPT 응답 준비중...
-
-            </div>
-
-        `;
-
-        saveChat();
-
-        scrollBottom();
-
-    }, 500);
-
-    /* 초기화 */
-
-    input.value = "";
-
-    selectedFile = null;
-
-    document
-        .getElementById("fileInput")
-        .value = "";
-
-    saveChat();
-
-    scrollBottom();
+input.value="";
 
 }
-
-/* =========================
-   저장
-========================= */
 
 function saveChat(){
 
-    localStorage.setItem(
-        "bumgpt_chat",
-        chat.innerHTML
-    );
+localStorage.setItem(
+"chat",
+chat.innerHTML
+);
 
 }
-
-/* =========================
-   리셋
-========================= */
 
 function resetChat(){
 
-    if(
-        confirm(
-            "채팅을 전부 삭제할까요?"
-        )
-    ){
+if(
+confirm(
+"채팅 삭제?"
+)
+){
 
-        chat.innerHTML = "";
+chat.innerHTML="";
 
-        localStorage.removeItem(
-            "bumgpt_chat"
-        );
-
-    }
+localStorage.removeItem(
+"chat"
+);
 
 }
 
-/* =========================
-   스크롤 아래로
-========================= */
+}
 
 function scrollBottom(){
 
-    chat.scrollTop =
-        chat.scrollHeight;
+chat.scrollTop=
+chat.scrollHeight;
 
 }
 
-/* =========================
-   엔터 전송
-========================= */
-
 input.addEventListener(
-    "keypress",
+"keypress",
 
-    function(e){
+e=>{
 
-        if(e.key === "Enter"){
+if(
+e.key=="Enter"
+){
 
-            sendMessage();
+sendMessage();
 
-        }
+}
 
-    }
+}
 
 );
 
