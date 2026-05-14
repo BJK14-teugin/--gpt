@@ -40,7 +40,7 @@ font-weight:bold;
 background:#111;
 color:white;
 border:1px solid #333;
-padding:10px;
+padding:10px 14px;
 border-radius:10px;
 }
 
@@ -105,7 +105,6 @@ width:70px;
 height:50px;
 border:none;
 border-radius:12px;
-background:white;
 font-weight:bold;
 }
 
@@ -134,18 +133,13 @@ width:60px;
 <body>
 
 <div class="topbar">
-
-<div class="logo">
-🤖 범-GPT
-</div>
+<div class="logo">🤖 범-GPT</div>
 
 <button
 class="reset-btn"
-onclick="resetChat()"
->
+onclick="resetChat()">
 리셋
 </button>
-
 </div>
 
 <div id="chat"></div>
@@ -156,8 +150,7 @@ onclick="resetChat()"
 
 <button
 class="attach-btn"
-onclick="openFile()"
->
+onclick="openFile()">
 +
 </button>
 
@@ -175,8 +168,7 @@ placeholder="범-GPT에게 메시지 보내기..."
 
 <button
 class="send-btn"
-onclick="sendMessage()"
->
+onclick="sendMessage()">
 전송
 </button>
 
@@ -207,7 +199,7 @@ scrollBottom();
 
 }
 
-}
+};
 
 function openFile(){
 
@@ -234,7 +226,7 @@ input.value.trim();
 if(text==""&&!selectedFile)
 return;
 
-chat.innerHTML+=`
+chat.innerHTML += `
 
 <div class="message user">
 
@@ -243,6 +235,20 @@ ${text}
 </div>
 
 `;
+
+chat.innerHTML += `
+
+<div class="message ai" id="loading">
+
+범-GPT 응답 기다리는중...
+
+</div>
+
+`;
+
+scrollBottom();
+
+input.value="";
 
 fetch(
 "https://beom-gpt.onrender.com/chat",
@@ -268,7 +274,18 @@ res=>res.json()
 
 .then(data=>{
 
-chat.innerHTML+=`
+const loading=
+document.getElementById(
+"loading"
+);
+
+if(loading){
+
+loading.remove();
+
+}
+
+chat.innerHTML += `
 
 <div class="message ai">
 
@@ -282,9 +299,32 @@ saveChat();
 
 scrollBottom();
 
-});
+})
 
-input.value="";
+.catch(()=>{
+
+const loading=
+document.getElementById(
+"loading"
+);
+
+if(loading){
+
+loading.remove();
+
+}
+
+chat.innerHTML += `
+
+<div class="message ai">
+
+오류 발생 😥
+
+</div>
+
+`;
+
+});
 
 }
 
@@ -336,7 +376,6 @@ sendMessage();
 }
 
 }
-
 );
 
 </script>
